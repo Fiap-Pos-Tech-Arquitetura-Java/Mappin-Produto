@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "nome": {
+      "type": "string"
+    },
+    "quantidade": {
+      "type": "number"
+    },
+    "preco": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "id",
+    "nome",
+    "quantidade",
+    "preco"
+  ]
+}
