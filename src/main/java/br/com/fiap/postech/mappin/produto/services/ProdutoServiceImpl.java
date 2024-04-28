@@ -1,6 +1,7 @@
 package br.com.fiap.postech.mappin.produto.services;
 
 import br.com.fiap.postech.mappin.produto.entities.Produto;
+import br.com.fiap.postech.mappin.produto.integration.ProdutoRequest;
 import br.com.fiap.postech.mappin.produto.repository.ProdutoRepository;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,12 @@ public class ProdutoServiceImpl implements ProdutoService {
     public void delete(UUID id) {
         findById(id);
         produtoRepository.deleteById(id);
+    }
+
+    @Override
+    public void removerDoEstoque(ProdutoRequest produtoRequest) {
+        Produto produtoDb = findById(produtoRequest.getId());
+        produtoDb.setQuantidade(produtoDb.getQuantidade() - produtoRequest.getQuantidade());
+        produtoRepository.save(produtoDb);
     }
 }

@@ -1,6 +1,7 @@
 package br.com.fiap.postech.mappin.produto.services;
 
 import br.com.fiap.postech.mappin.produto.entities.Produto;
+import br.com.fiap.postech.mappin.produto.integration.ProdutoRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,6 @@ public interface ProdutoService {
     Produto update(UUID id, Produto produto);
 
     void delete(UUID id);
+
+    void removerDoEstoque(ProdutoRequest produtoRequest);
 }
