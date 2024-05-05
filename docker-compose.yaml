@@ -1,6 +1,5 @@
-version : '3'
 services:
-  app:
+  mapping-produto:
     image: 'mappin-produto-docker-image'
     build:
       context: .
@@ -8,16 +7,24 @@ services:
     depends_on:
       - db
     ports:
-      - "8081:8080"
+      - "8081:8081"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5433/mappin-produto-db
       - SPRING_DATASOURCE_USERNAME=mappin
       - SPRING_DATASOURCE_PASSWORD=mappinProduto
       - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+    networks:
+      - mappin-network
   db:
     image: postgres:latest
     container_name: mappin-produto-db
+    command: -p 5433
     environment:
       - POSTGRES_USER=mappin
       - POSTGRES_PASSWORD=mappinProduto
       - POSTGRES_DB=mappin-produto-db
+    networks:
+      - mappin-network
+networks:
+  mappin-network:
+    external: true
