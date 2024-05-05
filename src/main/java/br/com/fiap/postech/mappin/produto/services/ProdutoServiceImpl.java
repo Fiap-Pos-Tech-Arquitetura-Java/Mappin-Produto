@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,7 +26,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public Produto save(Produto produto) {
-        produto.setId(UUID.randomUUID());
+        produtoRepository.findByNome(produto.getNome())
+            .ifPresentOrElse(
+                    p -> produto.setId(p.getId()),
+                    () -> produto.setId(UUID.randomUUID())
+            );
         return produtoRepository.save(produto);
     }
 

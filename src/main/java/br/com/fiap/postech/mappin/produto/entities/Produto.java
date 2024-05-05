@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,6 +21,7 @@ public class Produto {
     private Integer quantidade;
     @Column(name = "preco", nullable = false)
     private Double preco;
+    private LocalDateTime dataAtualizacao;
 
     public Produto() {
         super();
@@ -74,5 +76,13 @@ public class Produto {
 
     public void setPreco(Double preco) {
         this.preco = preco;
+    }
+
+    public LocalDateTime getDataAtualizacao() {
+        return dataAtualizacao;
+    }
+
+    public void setDataAtualizacao(LocalDateTime dataAtualizacao) {
+        this.dataAtualizacao = dataAtualizacao;
     }
 }

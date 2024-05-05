@@ -1,12 +1,10 @@
 package br.com.fiap.postech.mappin.produto.integration;
 
-import br.com.fiap.postech.mappin.produto.entities.Produto;
 import br.com.fiap.postech.mappin.produto.services.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.function.Consumer;
 
@@ -20,7 +18,7 @@ public class ProdutoConsumer {
     }
 
     @Bean(name = "consumer-remover-do-estoque")
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     Consumer<ProdutoRequest> consumerRemoverDoEstoque() {
         return produtoService::removerDoEstoque;
     }
