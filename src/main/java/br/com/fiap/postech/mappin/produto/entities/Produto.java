@@ -1,5 +1,6 @@
 package br.com.fiap.postech.mappin.produto.entities;
 
+import br.com.fiap.postech.mappin.produto.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -35,6 +36,7 @@ public class Produto {
     }
 
     @Override
+    @Generated
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Produto produto)) return false;

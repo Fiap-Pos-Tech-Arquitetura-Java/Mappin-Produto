@@ -2,6 +2,7 @@ package br.com.fiap.postech.mappin.produto.services;
 
 import br.com.fiap.postech.mappin.produto.entities.Produto;
 import br.com.fiap.postech.mappin.produto.helper.ProdutoHelper;
+import br.com.fiap.postech.mappin.produto.integration.ProdutoRequest;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -80,7 +81,7 @@ public class ProdutoServiceIT {
             var listaProdutosObtidos = produtoService.findAll(Pageable.unpaged(), criteriosDeBusca);
             // Assert
             assertThat(listaProdutosObtidos).isNotNull().isInstanceOf(Page.class);
-            assertThat(listaProdutosObtidos.getContent()).asList().hasSize(3);
+            assertThat(listaProdutosObtidos.getContent()).asList().hasSize(38);
             assertThat(listaProdutosObtidos.getContent()).asList().allSatisfy(
                     produtoObtido -> {
                         assertThat(produtoObtido).isNotNull();
@@ -147,6 +148,24 @@ public class ProdutoServiceIT {
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Produto não encontrado com o ID: " + produto.getId());
             ;
+        }
+    }
+
+    @Nested
+    class RemoverProdutoEstoque {
+        @Test
+        void devePermitirRemoverProdutoEstoque() {
+            var id = UUID.fromString("81b6b80d-e64e-41fc-9097-0f31127e2bc4");
+            var quantidadeOriginal = produtoService.findById(id).getQuantidade();
+            var quantidadeARemoverDoEstoque = 23;
+            var quantidadeEsperada = quantidadeOriginal - quantidadeARemoverDoEstoque;
+
+            var produtoRequest = new ProdutoRequest(id, quantidadeARemoverDoEstoque);
+            produtoService.removerDoEstoque(produtoRequest);
+
+            var produto = produtoService.findById(id);
+            assertThat(produto).isNotNull().isInstanceOf(Produto.class);
+            assertThat(produto.getQuantidade()).isEqualTo(quantidadeEsperada);
         }
     }
 }

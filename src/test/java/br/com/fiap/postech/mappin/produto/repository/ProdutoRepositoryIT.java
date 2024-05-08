@@ -24,7 +24,7 @@ public class ProdutoRepositoryIT {
     @Test
     void devePermitirCriarEstrutura() {
         var totalRegistros = produtoRepository.count();
-        assertThat(totalRegistros).isEqualTo(3);
+        assertThat(totalRegistros).isEqualTo(38);
     }
 
     @Test
@@ -73,6 +73,6 @@ public class ProdutoRepositoryIT {
         // Act
         var produtosListados = produtoRepository.findAll();
         // Assert
-        assertThat(produtosListados).hasSize(3);
+        assertThat(produtosListados).hasSize(38);
     }
 }

@@ -60,6 +60,24 @@ class ProdutoServiceTest {
             assertThat(produtoSalvo.getId()).isNotNull();
             verify(produtoRepository, times(1)).save(any(Produto.class));
         }
+
+        @Test
+        void devePermitirCadastrarProduto_produtoJaExistente() {
+            // Arrange
+            var produto = ProdutoHelper.getProduto(true);
+            when(produtoRepository.findByNome(anyString())).thenReturn(Optional.of(produto));
+            when(produtoRepository.save(any(Produto.class))).thenAnswer(r -> r.getArgument(0));
+            // Act
+            var produtoSalvo = produtoService.save(produto);
+            // Assert
+            assertThat(produtoSalvo)
+                    .isInstanceOf(Produto.class)
+                    .isNotNull();
+            assertThat(produtoSalvo.getNome()).isEqualTo(produto.getNome());
+            assertThat(produtoSalvo.getId()).isNotNull();
+            verify(produtoRepository, times(1)).findByNome(anyString());
+            verify(produtoRepository, times(1)).save(any(Produto.class));
+        }
     }
 
     @Nested
@@ -144,6 +162,27 @@ class ProdutoServiceTest {
         }
 
         @Test
+        void devePermitirAlterarProduto_semBody() {
+            // Arrange
+            var produto = ProdutoHelper.getProduto(true);
+            var produtoReferencia = new Produto(produto.getNome(), produto.getQuantidade(), produto.getPreco());
+            var novoProduto = new Produto(null, null, null );
+            novoProduto.setId(produto.getId());
+            when(produtoRepository.findById(produto.getId())).thenReturn(Optional.of(produto));
+            when(produtoRepository.save(any(Produto.class))).thenAnswer(r -> r.getArgument(0));
+            // Act
+            var produtoSalvo = produtoService.update(produto.getId(), novoProduto);
+            // Assert
+            assertThat(produtoSalvo)
+                    .isInstanceOf(Produto.class)
+                    .isNotNull();
+            assertThat(produtoSalvo.getNome()).isEqualTo(produtoReferencia.getNome());
+
+            verify(produtoRepository, times(1)).findById(any(UUID.class));
+            verify(produtoRepository, times(1)).save(any(Produto.class));
+        }
+
+        @Test
         void deveGerarExcecao_QuandoAlterarProdutoPorId_idNaoExiste() {
             // Arrange
             var produto = ProdutoHelper.getProduto(true);
@@ -155,6 +194,22 @@ class ProdutoServiceTest {
                     .hasMessage("Produto não encontrado com o ID: " + produto.getId());
             verify(produtoRepository, times(1)).findById(any(UUID.class));
             verify(produtoRepository, never()).save(any(Produto.class));
+        }
+
+        @Test
+        void deveGerarExcecao_QuandoAlterarClientePorId_alterandoId() {
+            // Arrange
+            var produto = ProdutoHelper.getProduto(true);
+            var produtoParam = ProdutoHelper.getProduto(true);
+            when(produtoRepository.findById(produto.getId())).thenReturn(Optional.of(produto));
+            UUID uuid = produto.getId();
+            // Act && Assert
+            assertThatThrownBy(() -> produtoService.update(uuid, produtoParam))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Não é possível alterar o id de um produto.");
+            verify(produtoRepository, times(1)).findById(any(UUID.class));
+            verify(produtoRepository, never()).save(any(Produto.class));
+
         }
     }
 
