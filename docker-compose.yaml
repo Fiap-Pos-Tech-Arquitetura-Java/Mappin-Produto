@@ -19,6 +19,8 @@ services:
     image: postgres:latest
     container_name: mappin-produto-db
     command: -p 5433
+    ports:
+      - "5433:5433"
     environment:
       - POSTGRES_USER=mappin
       - POSTGRES_PASSWORD=mappinProduto
