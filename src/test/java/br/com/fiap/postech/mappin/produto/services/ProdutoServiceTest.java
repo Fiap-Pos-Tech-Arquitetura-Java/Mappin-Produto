@@ -209,7 +209,21 @@ class ProdutoServiceTest {
                     .hasMessage("Não é possível alterar o id de um produto.");
             verify(produtoRepository, times(1)).findById(any(UUID.class));
             verify(produtoRepository, never()).save(any(Produto.class));
+        }
 
+        @Test
+        void deveGerarExcecao_QuandoAlterarClientePorId_alterandoPreco() {
+            // Arrange
+            var produto = ProdutoHelper.getProduto(true);
+            var produtoParam = new Produto(null,null, -123.124);
+            when(produtoRepository.findById(produto.getId())).thenReturn(Optional.of(produto));
+            UUID uuid = produto.getId();
+            // Act && Assert
+            assertThatThrownBy(() -> produtoService.update(uuid, produtoParam))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Não é possível alterar o preco de um produto para um valor menor ou igual a zero.");
+            verify(produtoRepository, times(1)).findById(any(UUID.class));
+            verify(produtoRepository, never()).save(any(Produto.class));
         }
     }
 

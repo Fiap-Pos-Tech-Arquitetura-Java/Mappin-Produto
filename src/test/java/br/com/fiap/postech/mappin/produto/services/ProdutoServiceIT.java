@@ -135,7 +135,6 @@ public class ProdutoServiceIT {
             assertThatThrownBy(() -> produtoService.findById(id))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Produto não encontrado com o ID: " + id);
-            ;
         }
 
         @Test
@@ -147,7 +146,6 @@ public class ProdutoServiceIT {
             assertThatThrownBy(() -> produtoService.delete(uuid))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Produto não encontrado com o ID: " + produto.getId());
-            ;
         }
     }
 
@@ -166,6 +164,19 @@ public class ProdutoServiceIT {
             var produto = produtoService.findById(id);
             assertThat(produto).isNotNull().isInstanceOf(Produto.class);
             assertThat(produto.getQuantidade()).isEqualTo(quantidadeEsperada);
+        }
+
+        @Test
+        void deveGerarExcecao_QuandoAlterarClientePorId_alterandoId() {
+            var id = UUID.fromString("81b6b80d-e64e-41fc-9097-0f31127e2bc4");
+            var quantidadeARemoverDoEstoque = 50;
+
+            var produtoRequest = new ProdutoRequest(id, quantidadeARemoverDoEstoque);
+
+            // Act &&  Assert
+            assertThatThrownBy(() -> produtoService.removerDoEstoque(produtoRequest))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Não é possível alterar a quantidade de um produto para um valor menor ou igual a zero.");
         }
     }
 }

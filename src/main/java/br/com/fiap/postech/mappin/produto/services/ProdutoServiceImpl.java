@@ -26,6 +26,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Override
     public Produto save(Produto produto) {
+        validaQuantidade(produto);
+        validaPreco(produto);
         produtoRepository.findByNome(produto.getNome())
             .ifPresentOrElse(
                     p -> produto.setId(p.getId()),
@@ -58,8 +60,28 @@ public class ProdutoServiceImpl implements ProdutoService {
         if (StringUtils.isNotEmpty(produtoParam.getNome())) {
             produto.setNome(produtoParam.getNome());
         }
+        if (produtoParam.getQuantidade() != null && !produtoParam.getQuantidade().equals(produto.getQuantidade())) {
+            validaQuantidade(produtoParam);
+            produto.setQuantidade(produtoParam.getQuantidade());
+        }
+        if (produtoParam.getPreco() != null && !produtoParam.getPreco().equals(produto.getPreco())) {
+            validaPreco(produtoParam);
+            produto.setPreco(produtoParam.getPreco());
+        }
         produto = produtoRepository.save(produto);
         return produto;
+    }
+
+    private static void validaQuantidade(Produto produto) {
+        if (produto.getQuantidade() < 1) {
+            throw new IllegalArgumentException("Não é possível alterar a quantidade de um produto para um valor menor ou igual a zero.");
+        }
+    }
+
+    private static void validaPreco(Produto produto) {
+        if (produto.getPreco().compareTo(0d) < 0) {
+            throw new IllegalArgumentException("Não é possível alterar o preco de um produto para um valor menor ou igual a zero.");
+        }
     }
 
     @Override
@@ -72,6 +94,7 @@ public class ProdutoServiceImpl implements ProdutoService {
     public void removerDoEstoque(ProdutoRequest produtoRequest) {
         Produto produtoDb = findById(produtoRequest.getId());
         produtoDb.setQuantidade(produtoDb.getQuantidade() - produtoRequest.getQuantidade());
+        validaQuantidade(produtoDb);
         produtoRepository.save(produtoDb);
     }
 }
